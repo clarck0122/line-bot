@@ -42,7 +42,7 @@ def callback():
     try:
         handler.handle(body, signature)
 
-        profile = line_bot_api.get_profile(user_id)
+        profile = line_bot_api.get_profile(userid)
         print(profile.display_name)
         print(profile.user_id)
         print(profile.picture_url)
