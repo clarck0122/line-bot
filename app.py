@@ -25,6 +25,7 @@ client_secret = config['imgur_api']['Client_Secret']
 album_id = config['imgur_api']['Album_ID']
 API_Get_Image = config['other_api']['API_Get_Image']
 
+userid = ""
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -303,6 +304,10 @@ def oil_price():
 def handle_message(event):
     print("event.reply_token:", event.reply_token)
     print("event.message.text:", event.message.text)
+
+    userid = event.source.user_id
+    print("userid={}".format(userid))
+
     if event.message.text.lower() == "eyny":
         content = eyny_movie()
         line_bot_api.reply_message(
