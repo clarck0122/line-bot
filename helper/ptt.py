@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 
 
 def get_page_number(content):
@@ -61,7 +62,7 @@ def crawl_page_gossiping(res):
     return article_gossiping_seq
 
 
-def ptt_gossiping():
+def ptt_gossiping(requests):
     rs = requests.session()
     load = {
         'from': '/bbs/Gossiping/index.html',
@@ -99,7 +100,7 @@ def ptt_gossiping():
     return content
 
 
-def ptt_beauty():
+def ptt_beauty(requests):
     rs = requests.session()
     res = rs.get('https://www.ptt.cc/bbs/Beauty/index.html', verify=False)
     soup = BeautifulSoup(res.text, 'html.parser')
@@ -134,7 +135,7 @@ def ptt_beauty():
     return content
 
 
-def ptt_hot():
+def ptt_hot(requests):
     target_url = 'http://disp.cc/b/PttHot'
     print('Start parsing pttHot....')
     rs = requests.session()

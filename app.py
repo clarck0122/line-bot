@@ -187,7 +187,7 @@ def handle_message(event):
             TextSendMessage(text=content))
         return 0
     if event.message.text == "PTT 表特版 近期大於 10 推的文章":
-        content = ptt_beauty()
+        content = ptt_beauty(requests)
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=content))
@@ -215,13 +215,13 @@ def handle_message(event):
             event.reply_token, image_message)
         return 0
     if event.message.text == "近期熱門廢文":
-        content = ptt_hot()
+        content = ptt_hot(requests)
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=content))
         return 0
     if event.message.text == "即時廢文":
-        content = ptt_gossiping()
+        content = ptt_gossiping(requests)
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=content))
