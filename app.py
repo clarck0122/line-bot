@@ -26,6 +26,7 @@ album_id = config['imgur_api']['Album_ID']
 API_Get_Image = config['other_api']['API_Get_Image']
 
 userid = ""
+groupid = ""
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -40,6 +41,13 @@ def callback():
     # handle webhook body
     try:
         handler.handle(body, signature)
+
+        profile = line_bot_api.get_profile(user_id)
+        print(profile.display_name)
+        print(profile.user_id)
+        print(profile.picture_url)
+        print(profile.status_message)
+
     except InvalidSignatureError:
         abort(400)
 
@@ -305,8 +313,11 @@ def handle_message(event):
     print("event.reply_token:", event.reply_token)
     print("event.message.text:", event.message.text)
 
+    global userid
+    global groupid
     userid = event.source.user_id
-    print("userid={}".format(userid))
+    groupid = event.source.user_id
+    print("userid={},groupid={}".format(userid,groupid))
 
     if event.message.text.lower() == "eyny":
         content = eyny_movie()
