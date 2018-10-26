@@ -30,7 +30,7 @@ album_id = os.environ.get('Album_ID', None)
 
 is_prod = os.environ.get('IS_HEROKU', None)
 
-print("is_prod={}".format(is_prod))
+print("is_prod={},line_bot_api={},handler={}".format(is_prod,line_bot_api,handler))
 
 userid = ""
 groupid = ""
