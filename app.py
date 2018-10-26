@@ -5,6 +5,7 @@ import configparser
 from bs4 import BeautifulSoup
 from flask import Flask, request, abort
 from imgurpython import ImgurClient
+import os
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -20,12 +21,12 @@ app = Flask(__name__)
 config = configparser.ConfigParser()
 config.read("config.ini")
 
-line_bot_api = LineBotApi(config['line_bot']['Channel_Access_Token'])
-handler = WebhookHandler(config['line_bot']['Channel_Secret'])
-client_id = config['imgur_api']['Client_ID']
-client_secret = config['imgur_api']['Client_Secret']
-album_id = config['imgur_api']['Album_ID']
-API_Get_Image = config['other_api']['API_Get_Image']
+line_bot_api = os.environ.get('Channel_Access_Token')
+handler = os.environ.get('Channel_Secret')
+client_id = os.environ.get('Client_ID')
+client_secret = os.environ.get('Client_Secret')
+album_id = os.environ.get('Album_ID')
+# API_Get_Image = config['other_api']['API_Get_Image']
 
 userid = ""
 groupid = ""
