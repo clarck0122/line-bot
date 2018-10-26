@@ -21,16 +21,17 @@ app = Flask(__name__)
 config = configparser.ConfigParser()
 config.read("config.ini")
 
-line_bot_api = LineBotApi(config['line_bot']['Channel_Access_Token'])
-handler = WebhookHandler(config['line_bot']['Channel_Secret'])
-client_id = config['imgur_api']['Client_ID']
-client_secret = config['imgur_api']['Client_Secret']
-album_id = config['imgur_api']['Album_ID']
-API_Get_Image = config['other_api']['API_Get_Image']
-
+line_bot_api = LineBotApi(os.environ.get('Channel_Access_Token'))
+handler = WebhookHandler(os.environ.get('Channel_Secret'))
+client_id = os.environ.get('Client_ID')
+client_secret = os.environ.get('Client_Secret')
+album_id = os.environ.get('Album_ID')
 is_prod = os.environ.get('IS_HEROKU', None)
 
-print("is_prod={},line_bot_api={},handler={}".format(is_prod,line_bot_api,handler))
+# line_bot_api = LineBotApi(config['line_bot']['Channel_Access_Token'])
+
+# print("is_prod={},line_bot_api={},handler={}".format(is_prod,line_bot_api,handler))
+# print("is_prod={},type:line_bot_api={},type:handler={}".format(is_prod,type(line_bot_api),type(handler)))
 
 userid = ""
 groupid = ""
