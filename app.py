@@ -21,11 +21,11 @@ app = Flask(__name__)
 config = configparser.ConfigParser()
 config.read("config.ini")
 
-line_bot_api = os.environ.get('Channel_Access_Token')
-handler = os.environ.get('Channel_Secret')
-client_id = os.environ.get('Client_ID')
-client_secret = os.environ.get('Client_Secret')
-album_id = os.environ.get('Album_ID')
+line_bot_api = os.environ.get('Channel_Access_Token', None)
+handler = os.environ.get('Channel_Secret', None)
+client_id = os.environ.get('Client_ID', None)
+client_secret = os.environ.get('Client_Secret', None)
+album_id = os.environ.get('Album_ID', None)
 # API_Get_Image = config['other_api']['API_Get_Image']
 
 userid = ""
