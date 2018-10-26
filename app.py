@@ -28,6 +28,10 @@ client_secret = os.environ.get('Client_Secret', None)
 album_id = os.environ.get('Album_ID', None)
 # API_Get_Image = config['other_api']['API_Get_Image']
 
+is_prod = os.environ.get('IS_HEROKU', None)
+
+print("is_prod={}".format(is_prod))
+
 userid = ""
 groupid = ""
 
