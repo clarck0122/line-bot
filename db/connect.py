@@ -7,8 +7,8 @@ https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-python
 import os
 import psycopg2
 from pympler import tracker
-
-
+import datetime
+import time
 
 
 DATABASE_URL = os.environ['DATABASE_URL']
@@ -58,7 +58,7 @@ class Heroku_DB():
             self.cur = self.conn.cursor()
 
             self.cur.execute(SQL, args)
-            print("The number of parts: ", self.cur.rowcount)
+            # print("The number of parts: ", self.cur.rowcount)
             # row = self.cur.fetchone()
             rows = self.cur.fetchall()
     
@@ -80,27 +80,70 @@ class Heroku_DB():
         else:        
             return rows[0][0] == 1
 
+    def GetUserInfo(self, user_id):
+        # rows = self.execute_SQL("SELECT count(*) FROM userinfo WHERE user_id LIKE %s", [ user_id + '%' ])
+        rows = self.execute_SQL("SELECT user_id, display_name, picture_url, status_message FROM userinfo WHERE user_id = %s", [ user_id ])
+        
+        return rows[0]
+
     def AddUser(self, user_id, display_name, picture_url, status_message):
 
         try:    
             # create a cursor
             self.cur = self.conn.cursor()
+
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         
+        try:
+            print(datetime.datetime.now())
+            ts = time.time()
+            SQL = "INSERT INTO userinfo (user_id, display_name, picture_url, status_message) VALUES (%s, %s, %s, %s)"
+            self.cur.execute(SQL, [user_id, display_name, picture_url, status_message])
+            self.conn.commit()
+
+            self.cur.close()
+            self.cur = None
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            self.conn.rollback()
+            print(error)
+
+    def UpdateUser(self, user_id, display_name, picture_url, status_message):
+
+        try:    
+            # create a cursor
+            self.cur = self.conn.cursor()
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+        
+        try:
+            SQL = "UPDATE userinfo SET display_name = %s, picture_url = %s, status_message = %s, createdate=%s WHERE user_id = %s"
+            self.cur.execute(SQL, [display_name, picture_url, status_message, datetime.datetime.now(), user_id])
+            self.conn.commit()
+
+            self.cur.close()
+            self.cur = None
+            
+        except (Exception, psycopg2.DatabaseError) as error:
+            self.conn.rollback()
+            print(error)
+
 
 
 if __name__ == "__main__":
     
     memory_tracker = tracker.SummaryTracker()
     conn = Heroku_DB()
+
     # memory_tracker = tracker.SummaryTracker()
-    print("test conn finish")
-    rows = conn.execute_SQL("select * from userinfo",[])
-    if rows != None:
-        print("not null, len(rows)={}".format(len(rows)))
-        for row in rows:
-            print (row)
+    # print("test conn finish")
+    # rows = conn.execute_SQL("select * from userinfo",[])
+    # if rows != None:
+    #     print("not null, len(rows)={}".format(len(rows)))
+    #     for row in rows:
+    #         print (row)
 
 
     # rows = conn.execute_SQL("select * from user_test")
@@ -116,3 +159,10 @@ if __name__ == "__main__":
     test2 = conn.IsExistUser("ta")
 
     print("test1={},test2={}".format(test1, test2))
+
+    conn.AddUser('test1235','大慶', 'http://ptt.cc/black', '歲月就像把殺豬刀')
+
+    conn.UpdateUser('test1234', '阿偉', 'http://ptt.cc/black', '放管中x4')
+
+    test3 = conn.GetUserInfo('test5566')
+    print("test3={}".format(test3))

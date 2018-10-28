@@ -16,6 +16,8 @@ from linebot.exceptions import (
 from linebot.models import *
 
 from helper.ptt import *
+from db import connect
+
 
 app = Flask(__name__)
 config = configparser.ConfigParser()
