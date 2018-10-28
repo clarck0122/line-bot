@@ -16,7 +16,7 @@ from linebot.exceptions import (
 from linebot.models import *
 
 from helper.ptt import *
-from db import connect
+from db.conn import Heroku_DB
 
 
 app = Flask(__name__)
@@ -30,10 +30,7 @@ client_secret = os.environ.get('Client_Secret')
 album_id = os.environ.get('Album_ID')
 is_prod = os.environ.get('IS_HEROKU', None)
 
-# line_bot_api = LineBotApi(config['line_bot']['Channel_Access_Token'])
 
-# print("is_prod={},line_bot_api={},handler={}".format(is_prod,line_bot_api,handler))
-# print("is_prod={},type:line_bot_api={},type:handler={}".format(is_prod,type(line_bot_api),type(handler)))
 
 userid = ""
 groupid = ""
@@ -60,6 +57,13 @@ def callback():
 
     except InvalidSignatureError:
         abort(400)
+
+    if conn.IsExistUser(profile.user_id):
+        db_info = conn.GetUserInfo(profile.user_id)
+
+    else:
+        conn.AddUser(profile.user_id,profile.display_name, profile.picture_url, profile.status_message)
+
 
     return 'ok'
 
@@ -506,4 +510,5 @@ def handle_sticker_message(event):
 
 
 if __name__ == '__main__':
+    conn = Heroku_DB()
     app.run()
