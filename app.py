@@ -16,7 +16,7 @@ from linebot.exceptions import (
 from linebot.models import *
 
 from helper.ptt import *
-from db.conn import Heroku_DB
+from db.connect import Heroku_DB
 
 
 app = Flask(__name__)
@@ -30,7 +30,7 @@ client_secret = os.environ.get('Client_Secret')
 album_id = os.environ.get('Album_ID')
 is_prod = os.environ.get('IS_HEROKU', None)
 
-
+conn = Heroku_DB()
 
 userid = ""
 groupid = ""
@@ -59,7 +59,10 @@ def callback():
         abort(400)
 
     if conn.IsExistUser(profile.user_id):
-        db_info = conn.GetUserInfo(profile.user_id)
+        db_info = conn.GetUserInfo(profile.user_id) #user_id, display_name, picture_url, status_message
+        if ( db_info[1] != profile.display_name or db_info[2] != profile.picture_url or 
+            db_info[3] != profile.status_message ):
+            conn.UpdateUser(profile.user_id,profile.display_name, profile.picture_url, profile.status_message)
 
     else:
         conn.AddUser(profile.user_id,profile.display_name, profile.picture_url, profile.status_message)
@@ -510,5 +513,5 @@ def handle_sticker_message(event):
 
 
 if __name__ == '__main__':
-    conn = Heroku_DB()
+
     app.run()
