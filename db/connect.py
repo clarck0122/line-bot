@@ -86,7 +86,11 @@ class Heroku_DB():
         
         return rows[0]
 
-    def AddUser(self, user_id, display_name = "", picture_url = "", status_message = ""):
+    def AddUser(self, user_id, display_name , picture_url , status_message ):
+        
+        if not display_name: display_name = ""
+        if not picture_url: picture_url = ""
+        if not status_message: status_message = ""
 
         try:    
             # create a cursor
@@ -110,6 +114,10 @@ class Heroku_DB():
             print(error)
 
     def UpdateUser(self, user_id, display_name, picture_url, status_message):
+
+        if not display_name: display_name = ""
+        if not picture_url: picture_url = ""
+        if not status_message: status_message = ""
 
         try:    
             # create a cursor
@@ -166,3 +174,5 @@ if __name__ == "__main__":
 
     test3 = conn.GetUserInfo('test5566')
     print("test3={}".format(test3))
+
+    conn.AddUser('test12357','大慶', None, None)
