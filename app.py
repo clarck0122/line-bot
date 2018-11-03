@@ -17,6 +17,7 @@ from linebot.models import *
 
 from helper.ptt import *
 from db.connect import Heroku_DB
+from imgur.upload import uploader
 
 
 app = Flask(__name__)
@@ -28,9 +29,11 @@ handler = WebhookHandler(os.environ.get('Channel_Secret'))
 client_id = os.environ.get('Client_ID')
 client_secret = os.environ.get('Client_Secret')
 album_id = os.environ.get('Album_ID')
+ptt_beauty_album_id = os.environ.get('ptt_beauty_Album_ID')
 is_prod = os.environ.get('IS_HEROKU', None)
 
 conn = Heroku_DB()
+uploader = uploader()
 
 userid = ""
 groupid = ""

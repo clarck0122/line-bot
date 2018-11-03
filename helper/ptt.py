@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 
 
+
+
 def get_page_number(content):
     start_index = content.find('index')
     end_index = content.find('.html')
@@ -131,6 +133,7 @@ def ptt_beauty(requests):
     for article in article_list:
         data = '[{} push] {}\n{}\n\n'.format(article.get('rate', None), article.get('title', None),
                                              article.get('url', None))
+
         content += data
     return content
 
