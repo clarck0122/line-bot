@@ -86,7 +86,7 @@ class Heroku_DB():
         
         return rows[0]
 
-    def AddUser(self, user_id, display_name, picture_url, status_message):
+    def AddUser(self, user_id, display_name = "", picture_url = "", status_message = ""):
 
         try:    
             # create a cursor
