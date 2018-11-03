@@ -30,7 +30,7 @@ client_secret = os.environ.get('Client_Secret')
 album_id = os.environ.get('Album_ID')
 is_prod = os.environ.get('IS_HEROKU', None)
 
-conn = Heroku_DB()
+
 
 userid = ""
 groupid = ""
@@ -513,5 +513,5 @@ def handle_sticker_message(event):
 
 
 if __name__ == '__main__':
-
+    conn = Heroku_DB()
     app.run()
