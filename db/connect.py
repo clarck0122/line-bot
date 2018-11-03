@@ -10,7 +10,7 @@ from pympler import tracker
 import datetime
 import time
 
-
+# get API Keys from Heroku Postgresql
 DATABASE_URL = os.environ['DATABASE_URL']
 
 class Heroku_DB():

@@ -23,8 +23,11 @@ app = Flask(__name__)
 config = configparser.ConfigParser()
 config.read("config.ini")
 
+# get API Keys from line
 line_bot_api = LineBotApi(os.environ.get('Channel_Access_Token'))
 handler = WebhookHandler(os.environ.get('Channel_Secret'))
+
+# get API Keys from Imgur
 client_id = os.environ.get('Client_ID')
 client_secret = os.environ.get('Client_Secret')
 album_id = os.environ.get('Album_ID')
