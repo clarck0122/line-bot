@@ -9,6 +9,48 @@ class ptt_craw():
         page_number = content[start_index + 5: end_index]
         return int(page_number) + 1
 
+    def over18(self, url):
+        res = requests.get(url, verify=False)
+        # 先檢查網址是否包含'over18'字串 ,如有則為18禁網站
+        if 'over18' in res.url:
+            print("18禁網頁")
+            # 從網址獲得版名
+            board = url.split('/')[-2]
+            load = {
+                'from': '/bbs/{}/index.html'.format(board),
+                'yes': 'yes'
+            }
+            res = requests.post('https://www.ptt.cc/ask/over18', verify=False, data=load)
+        return BeautifulSoup(res.text, 'html.parser'), res.status_code
+
+    def image_url(self, link):
+        # 符合圖片格式的網址
+        image_seq = ['.jpg', '.png', '.gif', '.jpeg']
+        for seq in image_seq:
+            if link.endswith(seq):
+                return link
+        # 有些網址會沒有檔案格式， "https://imgur.com/xxx"
+        if 'imgur' in link:
+            return '{}.jpg'.format(link)
+        return ''
+        
+    def store_pic(self, url, pic_url_list):
+        # 檢查看板是否為18禁,有些看板為18禁
+
+        soup, _ = self.over18(url)
+        # crawler_time = url.split('/')[-2] + crawler_time
+        # 避免有些文章會被使用者自行刪除標題列
+        try:
+            title = soup.select('.article-meta-value')[2].text
+        except Exception as e:
+            title = "no title"
+
+        # 抓取圖片URL(img tag )
+        for img in soup.find_all("a", rel='nofollow'):
+            img_url = self.image_url(img['href'])
+            if img_url:
+                pic_url_list.append(img_url)
+        
 
     def craw_page(self, res, push_rate):
         soup_ = BeautifulSoup(res.text, 'html.parser')
@@ -106,12 +148,14 @@ class ptt_craw():
         rs = requests.session()
         res = rs.get('https://www.ptt.cc/bbs/Beauty/index.html', verify=False)
         soup = BeautifulSoup(res.text, 'html.parser')
+        # print(soup)
         all_page_url = soup.select('.btn.wide')[1]['href']
         start_page = self.get_page_number(all_page_url)
         page_term = 2  # crawler count
         push_rate = 10  # 推文
         index_list = []
         article_list = []
+        url_list = []
         for page in range(start_page, start_page - page_term, -1):
             page_url = 'https://www.ptt.cc/bbs/Beauty/index{}.html'.format(page)
             index_list.append(page_url)
@@ -133,8 +177,10 @@ class ptt_craw():
         for article in article_list:
             data = '[{} push] {}\n{}\n\n'.format(article.get('rate', None), article.get('title', None),
                                                 article.get('url', None))
+            self.store_pic(article.get('url', None), url_list)
+
             content += data
-        return content
+        return content, url_list
 
 
     def ptt_hot(self, requests):
@@ -154,5 +200,6 @@ class ptt_craw():
 
 if __name__ == "__main__" :
     ptt = ptt_craw()
-    tmp = ptt.ptt_gossiping(requests)
+    tmp,url_list = ptt.ptt_beauty(requests)
     print(tmp)
+    print(url_list)

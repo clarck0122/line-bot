@@ -15,7 +15,8 @@ from linebot.exceptions import (
 )
 from linebot.models import *
 
-from helper.ptt import *
+# from helper.ptt import *
+from helper.ptt_class import ptt_craw
 from db.connect import Heroku_DB
 from imgur.upload import uploader
 
@@ -36,6 +37,7 @@ is_prod = os.environ.get('IS_HEROKU', None)
 
 conn = Heroku_DB()
 uploader = uploader()
+ptt_craw = ptt_craw()
 
 userid = ""
 groupid = ""
@@ -207,7 +209,7 @@ def handle_message(event):
             TextSendMessage(text=content))
         return 0
     if event.message.text == "PTT 表特版 近期大於 10 推的文章":
-        content, index_list = ptt_beauty(requests)
+        content, index_list = ptt_craw.ptt_beauty(requests)
         for index_url in index_list:
             uploader.upload_photo(index_url, ptt_beauty_album_id)
 
@@ -217,7 +219,7 @@ def handle_message(event):
         return 0
     if event.message.text == "來張 imgur 正妹圖片":
         client = ImgurClient(client_id, client_secret, access_token, refresh_token)
-        images = client.get_album_images(album_id)
+        images = client.get_album_images(ptt_beauty_album_id)
         index = random.randint(0, len(images) - 1)
         url = images[index].link
         image_message = ImageSendMessage(
@@ -238,13 +240,13 @@ def handle_message(event):
             event.reply_token, image_message)
         return 0
     if event.message.text == "近期熱門廢文":
-        content = ptt_hot(requests)
+        content = ptt_craw.ptt_hot(requests)
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=content))
         return 0
     if event.message.text == "即時廢文":
-        content = ptt_gossiping(requests)
+        content = ptt_craw.ptt_gossiping(requests)
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=content))

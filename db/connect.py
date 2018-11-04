@@ -42,17 +42,17 @@ class Heroku_DB():
             self.cur = None
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
-        # finally:
-        #     if self.conn is not None:
-        #         self.conn.close()
-        #         print('Database connection closed.')
+        finally:
+            if self.conn is not None:
+                self.conn.close()
+                # print('Database connection closed.')
 
     def execute_SQL(self, SQL, args):
         """ query data from the vendors table """
         try:
 
             # conn = psycopg2.connect(**params)
-            # self.conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+            self.conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     
             # create a cursor
             self.cur = self.conn.cursor()
@@ -65,11 +65,15 @@ class Heroku_DB():
             # close the communication with the PostgreSQL
             self.cur.close()
             self.cur = None
-
             return rows
 
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
+
+        finally:
+            if self.conn is not None:
+                self.conn.close()
+
 
     def IsExistUser(self, user_id):
         # rows = self.execute_SQL("SELECT count(*) FROM userinfo WHERE user_id LIKE %s", [ user_id + '%' ])
@@ -94,6 +98,7 @@ class Heroku_DB():
 
         try:    
             # create a cursor
+            self.conn = psycopg2.connect(DATABASE_URL, sslmode='require')
             self.cur = self.conn.cursor()
 
         except (Exception, psycopg2.DatabaseError) as error:
@@ -113,6 +118,10 @@ class Heroku_DB():
             self.conn.rollback()
             print(error)
 
+        finally:
+            if self.conn is not None:
+                self.conn.close()
+
     def UpdateUser(self, user_id, display_name, picture_url, status_message):
 
         if not display_name: display_name = ""
@@ -121,7 +130,8 @@ class Heroku_DB():
 
         try:    
             # create a cursor
-            self.cur = self.conn.cursor()
+            self.conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+            self.cur = self.conn.cursor()            
 
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
@@ -138,29 +148,16 @@ class Heroku_DB():
             self.conn.rollback()
             print(error)
 
+        finally:
+            if self.conn is not None:
+                self.conn.close()
+
 
 
 if __name__ == "__main__":
     
     memory_tracker = tracker.SummaryTracker()
     conn = Heroku_DB()
-
-    # memory_tracker = tracker.SummaryTracker()
-    # print("test conn finish")
-    # rows = conn.execute_SQL("select * from userinfo",[])
-    # if rows != None:
-    #     print("not null, len(rows)={}".format(len(rows)))
-    #     for row in rows:
-    #         print (row)
-
-
-    # rows = conn.execute_SQL("select * from user_test")
-    # if rows != None:
-    #     print("not null, len(rows)={}".format(len(rows)))
-    #     for row in rows:
-    #         print (row)
-    # print("test query finish")
-    # memory_tracker.print_diff()
 
     test1 = conn.IsExistUser("test5566")
     
