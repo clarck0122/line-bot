@@ -177,7 +177,7 @@ class ptt_craw():
         for article in article_list:
             data = '[{} push] {}\n{}\n\n'.format(article.get('rate', None), article.get('title', None),
                                                 article.get('url', None))
-            self.store_pic(article.get('url', None), url_list)
+            # self.store_pic(article.get('url', None), url_list)
 
             content += data
         return content, url_list
