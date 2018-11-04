@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
 
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 class ptt_craw():
     def get_page_number(self, content):
@@ -65,8 +67,12 @@ class ptt_craw():
                     rate = r_ent.find(class_="nrec").text
                     url = 'https://www.ptt.cc' + link
                     if rate:
-                        rate = 100 if rate.startswith('爆') else rate
-                        rate = -1 * int(rate[1]) if rate.startswith('X') else rate
+                        if rate.startswith('爆'):
+                            rate = 100
+                        elif rate.startswith('X'):
+                            rate = -1
+                        else:
+                            rate = int(rate)
                     else:
                         rate = 0
                     # 比對推文數
@@ -177,7 +183,7 @@ class ptt_craw():
         for article in article_list:
             data = '[{} push] {}\n{}\n\n'.format(article.get('rate', None), article.get('title', None),
                                                 article.get('url', None))
-            # self.store_pic(article.get('url', None), url_list)
+            self.store_pic(article.get('url', None), url_list)
 
             content += data
         return content, url_list

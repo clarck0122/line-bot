@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-
+import requests
 
 
 
@@ -23,8 +23,15 @@ def craw_page(res, push_rate):
                 rate = r_ent.find(class_="nrec").text
                 url = 'https://www.ptt.cc' + link
                 if rate:
-                    rate = 100 if rate.startswith('爆') else rate
-                    rate = -1 * int(rate[1]) if rate.startswith('X') else rate
+                    # rate = 100 if rate.startswith('爆') else rate
+                    # rate = -1 * int(rate[1]) if rate.startswith('X') else rate
+                    if rate.startswith('爆'):
+                        rate = 100
+                    elif rate.startswith('X'):
+                        rate = -1
+                    else:
+                        rate = int(rate)
+
                 else:
                     rate = 0
                 # 比對推文數
@@ -152,3 +159,6 @@ def ptt_hot(requests):
             break
         content += '{}\n{}\n\n'.format(title, link)
     return content
+
+if __name__ == "__main__":
+    ptt_beauty(requests)

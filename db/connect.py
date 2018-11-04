@@ -47,16 +47,22 @@ class Heroku_DB():
                 self.conn.close()
                 # print('Database connection closed.')
 
+    def Reconnect(self):
+        print("Reconnect...")
+        self.conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        self.cur = self.conn.cursor()
+
     def execute_SQL(self, SQL, args):
         """ query data from the vendors table """
         try:
-
-            # conn = psycopg2.connect(**params)
-            self.conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-    
             # create a cursor
             self.cur = self.conn.cursor()
 
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+            self.Reconnect()
+
+        try:
             self.cur.execute(SQL, args)
             # print("The number of parts: ", self.cur.rowcount)
             # row = self.cur.fetchone()
@@ -69,10 +75,6 @@ class Heroku_DB():
 
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
-
-        finally:
-            if self.conn is not None:
-                self.conn.close()
 
 
     def IsExistUser(self, user_id):
@@ -98,11 +100,12 @@ class Heroku_DB():
 
         try:    
             # create a cursor
-            self.conn = psycopg2.connect(DATABASE_URL, sslmode='require')
             self.cur = self.conn.cursor()
+            
 
-        except (Exception, psycopg2.DatabaseError) as error:
+        except (Exception) as error:
             print(error)
+            self.Reconnect()
         
         try:
             print(datetime.datetime.now())
@@ -118,9 +121,6 @@ class Heroku_DB():
             self.conn.rollback()
             print(error)
 
-        finally:
-            if self.conn is not None:
-                self.conn.close()
 
     def UpdateUser(self, user_id, display_name, picture_url, status_message):
 
@@ -130,12 +130,12 @@ class Heroku_DB():
 
         try:    
             # create a cursor
-            self.conn = psycopg2.connect(DATABASE_URL, sslmode='require')
             self.cur = self.conn.cursor()            
 
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
-        
+            self.Reconnect()
+
         try:
             SQL = "UPDATE userinfo SET display_name = %s, picture_url = %s, status_message = %s, createdate=%s WHERE user_id = %s"
             self.cur.execute(SQL, [display_name, picture_url, status_message, datetime.datetime.now(), user_id])
@@ -148,9 +148,9 @@ class Heroku_DB():
             self.conn.rollback()
             print(error)
 
-        finally:
-            if self.conn is not None:
-                self.conn.close()
+        # finally:
+        #     if self.conn is not None:
+        #         self.conn.close()
 
 
 
@@ -159,17 +159,25 @@ if __name__ == "__main__":
     memory_tracker = tracker.SummaryTracker()
     conn = Heroku_DB()
 
-    test1 = conn.IsExistUser("test5566")
+    # test1 = conn.IsExistUser("test5566")
     
-    test2 = conn.IsExistUser("ta")
+    # test2 = conn.IsExistUser("ta")
 
-    print("test1={},test2={}".format(test1, test2))
+    # print("test1={},test2={}".format(test1, test2))
 
-    conn.AddUser('test1235','大慶', 'http://ptt.cc/black', '歲月就像把殺豬刀')
+    
 
-    conn.UpdateUser('test1234', '阿偉', 'http://ptt.cc/black', '放管中x4')
+    conn.AddUser('test20181104-1','大慶', 'http://ptt.cc/black', '歲月就像把殺豬刀')
+    conn.conn.close()    
+    conn.AddUser('test20181104-2','大慶', 'http://ptt.cc/black', '歲月就像把殺豬刀')
 
-    test3 = conn.GetUserInfo('test5566')
-    print("test3={}".format(test3))
+    conn.UpdateUser('test20181104-1','大慶', 'http://ptt.cc/black', '測試')
+    conn.conn.close()    
+    conn.UpdateUser('test20181104-2','大慶', 'http://ptt.cc/black', '測試')
 
-    conn.AddUser('test12357','大慶', None, None)
+    # conn.UpdateUser('test1234', '阿偉', 'http://ptt.cc/black', '放管中x4')
+
+    # test3 = conn.GetUserInfo('test5566')
+    # print("test3={}".format(test3))
+
+    # conn.AddUser('test12357','大慶', None, None)
