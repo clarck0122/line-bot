@@ -135,7 +135,7 @@ def ptt_beauty(requests):
                                              article.get('url', None))
 
         content += data
-    return content
+    return content, index_list
 
 
 def ptt_hot(requests):

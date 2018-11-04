@@ -28,6 +28,8 @@ line_bot_api = LineBotApi(os.environ.get('Channel_Access_Token'))
 handler = WebhookHandler(os.environ.get('Channel_Secret'))
 client_id = os.environ.get('Client_ID')
 client_secret = os.environ.get('Client_Secret')
+access_token = os.environ.get('access_token')
+refresh_token = os.environ.get('refresh_token')
 album_id = os.environ.get('Album_ID')
 ptt_beauty_album_id = os.environ.get('ptt_beauty_Album_ID')
 is_prod = os.environ.get('IS_HEROKU', None)
@@ -205,13 +207,16 @@ def handle_message(event):
             TextSendMessage(text=content))
         return 0
     if event.message.text == "PTT 表特版 近期大於 10 推的文章":
-        content = ptt_beauty(requests)
+        content, index_list = ptt_beauty(requests)
+        for index_url in index_list:
+            uploader.upload_photo(index_url, ptt_beauty_album_id)
+
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=content))
         return 0
     if event.message.text == "來張 imgur 正妹圖片":
-        client = ImgurClient(client_id, client_secret)
+        client = ImgurClient(client_id, client_secret, access_token, refresh_token)
         images = client.get_album_images(album_id)
         index = random.randint(0, len(images) - 1)
         url = images[index].link
