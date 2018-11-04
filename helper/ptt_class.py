@@ -200,6 +200,6 @@ class ptt_craw():
 
 if __name__ == "__main__" :
     ptt = ptt_craw()
-    tmp,url_list = ptt.ptt_beauty(requests)
+    tmp, url_list = ptt.ptt_beauty(requests)
     print(tmp)
     print(url_list)
