@@ -61,6 +61,7 @@ def callback():
         print(profile.user_id)
         print(profile.picture_url)
         print(profile.status_message)
+        print("2019/02/22")
 
     except InvalidSignatureError:
         abort(400)
