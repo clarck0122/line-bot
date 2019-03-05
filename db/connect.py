@@ -1,8 +1,8 @@
-
 """
 Reference
 https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-python
 """
+
 
 import os
 import psycopg2
@@ -25,14 +25,14 @@ class Heroku_DB():
             print("Connecting to the PostgreSQL database...{}".format(DATABASE_URL))
             # conn = psycopg2.connect(**params)
             self.conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-    
+            
             # create a cursor
             self.cur = self.conn.cursor()
             
         # execute a statement
             print('PostgreSQL database version:')
             self.cur.execute('SELECT version()')
-    
+
             # display the PostgreSQL database server version
             db_version = self.cur.fetchone()
             print(db_version)
@@ -55,6 +55,8 @@ class Heroku_DB():
     def execute_SQL(self, SQL, args):
         """ query data from the vendors table """
         try:
+            if self.conn.closed != 0 : self.Reconnect()
+            
             # create a cursor
             self.cur = self.conn.cursor()
 
@@ -99,9 +101,10 @@ class Heroku_DB():
         if not status_message: status_message = ""
 
         try:    
+            if self.conn.closed != 0 : self.Reconnect()
+
             # create a cursor
             self.cur = self.conn.cursor()
-            
 
         except (Exception) as error:
             print(error)
@@ -128,7 +131,9 @@ class Heroku_DB():
         if not picture_url: picture_url = ""
         if not status_message: status_message = ""
 
-        try:    
+        try:
+            if self.conn.closed != 0 : self.Reconnect()
+
             # create a cursor
             self.cur = self.conn.cursor()            
 
@@ -167,13 +172,13 @@ if __name__ == "__main__":
 
     
 
-    conn.AddUser('test20181104-1','大慶', 'http://ptt.cc/black', '歲月就像把殺豬刀')
-    conn.conn.close()    
-    conn.AddUser('test20181104-2','大慶', 'http://ptt.cc/black', '歲月就像把殺豬刀')
+    conn.AddUser('test20181104-1','clarck', 'http://ptt.cc/black', 'hello world')
+    # conn.conn.close()    
+    conn.AddUser('test20181104-2','clarck', 'http://ptt.cc/black', 'test5566')
 
-    conn.UpdateUser('test20181104-1','大慶', 'http://ptt.cc/black', '測試')
-    conn.conn.close()    
-    conn.UpdateUser('test20181104-2','大慶', 'http://ptt.cc/black', '測試')
+    conn.UpdateUser('test20181104-1','clarck', 'http://ptt.cc/black', 'test7788')
+    # conn.conn.close()    
+    conn.UpdateUser('test20181104-2','clarck', 'http://ptt.cc/black', 'test9900')
 
     # conn.UpdateUser('test1234', '阿偉', 'http://ptt.cc/black', '放管中x4')
 
