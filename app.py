@@ -16,7 +16,7 @@ from linebot.exceptions import (
 from linebot.models import *
 
 # from helper.ptt import *
-from helper.ptt_class import ptt_craw
+# from helper.ptt_class import ptt_craw
 from db.connect import Heroku_DB
 from imgur.upload import uploader
 from helper.function import *
@@ -38,7 +38,7 @@ ptt_beauty_album_id = os.environ.get('ptt_beauty_Album_ID')
 
 conn = Heroku_DB()
 uploader = uploader()
-ptt_craw = ptt_craw()
+# ptt_craw = ptt_craw()
 
 userid = ""
 groupid = ""
