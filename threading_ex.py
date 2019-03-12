@@ -2,7 +2,7 @@ import threading
 import time
 
 exitFlag = 0
-
+thread_cnt = 8
 class myThread (threading.Thread):
    def __init__(self, threadID, name, counter):
       threading.Thread.__init__(self)
@@ -10,41 +10,30 @@ class myThread (threading.Thread):
       self.name = name
       self.counter = counter
    def run(self):
-      print( "Starting " + self.name)
+      print("Starting " + self.name)
       print_time(self.name, 5, self.counter)
-      print( "Exiting " + self.name)
+      print("Exiting " + self.name)
 
 def print_time(threadName, counter, delay):
    while counter:
       if exitFlag:
          threadName.exit()
       time.sleep(delay)
-      print("{}: {}".format(threadName, time.ctime(time.time())))
+      print( "%s: %s" % (threadName, time.ctime(time.time())))
       counter -= 1
 
-# Create new threads
-thread1 = myThread(1, "Thread-1", 1)
-thread2 = myThread(2, "Thread-2", 2)
 
-# Start new Threads
-thread1.start()
-thread2.start()
 
+threads = []
+
+for i in range(thread_cnt):
+   thread = myThread(i, "Thread-{}".format(str(i)), i % 4)
+   threads.append(thread)
+
+for thread in threads:
+   thread.start()
 print("Exiting Main Thread")
 
-
-def hello():
-    print("hello, world")
-
-t = threading.Timer(5.0, hello)
-t.start() # after 5 seconds, "hello, world" will be printed
-
-
-def foo(cnt):
-    
-    if cnt < 5:
-        cnt += 1
-        print("{} cnt={}".format( time.ctime(), cnt))
-        threading.Timer(3, foo, [cnt]).start()
-
-foo(0)
+for thread in threads:
+   thread.join()
+print("Exiting all Threading")
